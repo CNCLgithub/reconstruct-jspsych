@@ -15,7 +15,7 @@ var N_TRIALS = 10;
 
 // Debug Variables
 var SKIP_SUBJECT_ID = true;
-var SKIP_INSTRUCTIONS = true;
+var SKIP_INSTRUCTIONS = false;
 
 // All pages to be loaded
 var pages = [
@@ -73,12 +73,9 @@ var Experiment = function(condlist, trials) {
             "Please also take a moment to silence your phone so that you are not interrupted by any messages mid-experiment." +
             "<br><br>" +
             "Click <b>Next</b> when you are ready to continue.",
-            "At the beginning of each instance of the task, you will briefly see a cross, followed by an image.<br><br>" +
-            "<span style='color:blue'>Your task is to determine whether the cross has a longer <b>HORIZONTAL</b> bar, or a longer <b>VERTICAL</b> bar.</span><br><br>" +
+            "INSTRUCTIONS P2 <br> <br>" +
             "Click <b>Next</b> to continue.",
-            "In the middle of each instance of the task, please record your response with your key board.<br>" +
-            "<span style='color:red'><b>You will not be able to progress until you make a selection.</b></span><br><br>" +
-            "Also, please keep your hands near the <b>F and J</b> keys for comfort and accuracy. <br><br>" +
+            "INSTRUCTIONS P3 <br> <br>" +
             "Click <b>Next</b> to begin the study.",
         ],
         show_clickable_nav: true,
@@ -92,13 +89,14 @@ var Experiment = function(condlist, trials) {
     if (SKIP_INSTRUCTIONS == false) {trials.push(instructions)};
     
     for (i = 0; i < condlist.length; i++) {
-        var stim = condlist[i][1];
+        var vid = condlist[i][0];
+        var img = condlist[i][1];
 
         var stim_vid = {
             type: jsPsychVideoButtonResponse,
             stimulus: [
                 // placeholder data
-                'static/data/movies/1_1_1.mp4',
+                'static/data/movies/' + vid,
             ],
             choices: [],
             prompt: "<p></p>",
@@ -113,7 +111,7 @@ var Experiment = function(condlist, trials) {
             prompt_location: 'abovecanvas',
             stroke_color_palette: ['blue', 'pink', 'green', 'orange'],
             stroke_color: 'blue',
-            background_image: "static/data/images/stims/" + stim, // placeholder data
+            background_image: "static/data/images/" + img, // placeholder data
             canvas_width: 750,
             canvas_height: 500,
             save_strokes: false,
