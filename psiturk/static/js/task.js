@@ -11,11 +11,11 @@
 var psiTurk = new PsiTurk(uniqueId, adServerLoc, mode);
 
 // Define global experiment variables
-var N_TRIALS = 10;
+var N_TRIALS = 3;
 
 // Debug Variables
 var SKIP_PROLIFIC_ID = true;
-var SKIP_INSTRUCTIONS = true;
+var SKIP_INSTRUCTIONS = true; // variable doesn't work atm -- chloë 01/20/2023
 
 // All pages to be loaded
 var pages = [
@@ -61,7 +61,12 @@ var Experiment = function (jsPsych, condlist, trials) {
             type: "prolific_id",
         }
     }
+    // add the following trial pages to be displayed in their respective order
+    if (SKIP_PROLIFIC_ID == false) {
+        trials.push(prolific_id)
+    };
 
+    // welcome page
     var welcome = {
         type: jsPsychInstructions,
         pages: [
@@ -74,14 +79,11 @@ var Experiment = function (jsPsych, condlist, trials) {
             "Click <b>Next</b> when you are ready to continue.",
         ],
         show_clickable_nav: true,
-        // show_page_number: true,
-        // page_label: "<b>Instructions</b>",
         allow_backward: false,
     }
-
     trials.push(welcome)
 
-    // TODO: change instructions
+    // TODO: add correct instructions
     // instructions trial
     var instructions = {
         type: jsPsychInstructions,
@@ -97,6 +99,7 @@ var Experiment = function (jsPsych, condlist, trials) {
         allow_backward: false,
     }
 
+    // example video
     var sim_vid = {
         type: jsPsychVideoButtonResponse,
         stimulus: [
@@ -110,10 +113,11 @@ var Experiment = function (jsPsych, condlist, trials) {
         trial_duration: 900,
     };
 
+    // example sketchpad
     var sim_sketch = {
         type: jsPsychSketchpad,
         prompt: '<h2>Example of the sketchpad</h2>' + '<h3>Please take a moment to familiarize yourself with the sketchpad. </h3>' + '<br><p>Using your mouse, draw the complete trajectory of the ball from the previous video.</p>',
-        prompt_location: 'abovecanvas',
+        prompt_location: 'belowcanvas',
         stroke_color_palette: ['blue'],
         stroke_color: 'blue',
         background_image: "static/data/images/empty-room.png", // placeholder data
@@ -122,23 +126,23 @@ var Experiment = function (jsPsych, condlist, trials) {
         save_strokes: false,
         save_final_image: false,
         show_finished_button: true,
-        trial_duration: 4000,
+        trial_duration: 10000,
         show_countdown_trial_duration: true
     }
 
-    // TODO: change comp check questions
+    // TODO: add correct comp check questions
     // comprehension check questions
     var comp_check = {
         type: jsPsychSurveyMultiChoice,
         preamble: "<h2> Comprehension Check</h2>",
         questions: [{
-                prompt: "Your task for this experiment is to ~eat bananas~.",
+                prompt: "Your task for this experiment is to ~<b>eat bananas</b>~.",
                 name: 'check1',
                 options: ['True', "False"],
                 required: true
             },
             {
-                prompt: "Your task for this experiment is to ~order takeout~.",
+                prompt: "Your task for this experiment is to ~<b>order takeout</b>~.",
                 name: 'check2',
                 options: ['True', "False"],
                 required: true
@@ -154,7 +158,7 @@ var Experiment = function (jsPsych, condlist, trials) {
         }
     };
 
-    // TODO: change feedback response
+
     // comprehension check feedback
     var comp_feedback = {
         type: jsPsychHtmlButtonResponse,
@@ -162,9 +166,9 @@ var Experiment = function (jsPsych, condlist, trials) {
             var last_resp_correct = jsPsych.data.getLastTrialData().values()[0].correct;
 
             if (last_resp_correct) {
-                return "<p>correct, move on</p>"
+                return "<span style='color:green'><h2>You passed the comprehension check!</h2></span>" + "<br>Please click <b>Next</b> to begin the study."
             } else {
-                return "<p> wrong, go back</p>"
+                return "<span style='color:red'><h2>You failed to respond <b>correctly</b> to all parts of the comprehension check.</h2></span>" + "<br>Please click <b>Next</b> to revisit the instructions."
             }
         },
         choices: ['Next']
@@ -174,21 +178,13 @@ var Experiment = function (jsPsych, condlist, trials) {
     var comp_loop = {
         timeline: [instructions, sim_vid, sim_sketch, comp_check, comp_feedback],
         loop_function: function (data) {
-
             // check if comp_check was passed, break loop 
-            return (data.values()[1].correct) ? false : true;
+            return (data.values()[3].correct) ? false : true;
         }
     };
 
     trials.push(comp_loop)
 
-    // add the following trial pages to be displayed in their respective order
-    if (SKIP_PROLIFIC_ID == false) {
-        trials.push(prolific_id)
-    };
-    if (SKIP_INSTRUCTIONS == false) {
-        trials.push(instructions)
-    };
 
     for (i = 0; i < condlist.length; i++) {
         var vid = condlist[i][0];
@@ -223,7 +219,7 @@ var Experiment = function (jsPsych, condlist, trials) {
         }
 
         // display fixation cross then stimulus
-        trials.push(stim_vid);
+        trials.push(stim_vid, sketchpad);
     }
 
     // end message
