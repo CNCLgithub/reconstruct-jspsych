@@ -4,7 +4,7 @@
 CONTLINK="docker://cpllab/psiturk:latest"
 # Path to put data
 DATAPATH="psiturk/static/"
-LINKHASH="4u6kvx68wbg6tx3fmonrcphueprsy2j6"
+LINKHASH="6sk7j03bxu7teak2utr4ts3t1sh2ykdt"
 DATALINK="https://yale.box.com/shared/static/${LINKHASH}.gz"
 
 # DATALINK="https://yale.box.com/shared/static/eyu6jgppz6ek4a3vz63t9t1ipqit2q3m.gz"
