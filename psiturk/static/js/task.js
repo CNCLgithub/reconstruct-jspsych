@@ -33,7 +33,7 @@ psiTurk.preloadPages(pages);
  * Experiment *
  **************/
 
-
+// jsPsych needs to be passed in to access the previous trial data
 var Experiment = function (jsPsych, condlist, trials) {
     // empty html template for jsPsych to use
     psiTurk.showPage('trial.html');
@@ -66,11 +66,13 @@ var Experiment = function (jsPsych, condlist, trials) {
         trials.push(prolific_id)
     };
 
-    // welcome page
+    // ---------------------
+    //      welcome page    
+    // ---------------------
     var welcome = {
         type: jsPsychInstructions,
         pages: [
-            "<h1>Hi, thank you for volunteering to help out with our study!</h1><br><br>" +
+            "<h1>Hi, welcome to our study!</h1><br><br>" +
             "Please take a moment to adjust your seating so that you can comfortably watch the monitor and use the keyboard/mouse.<br>" +
             "Feel free to dim the lights as well. " +
             "Close the door or do whatever is necessary to minimize disturbance during the experiment. <br>" +
@@ -82,9 +84,12 @@ var Experiment = function (jsPsych, condlist, trials) {
         allow_backward: false,
     }
     trials.push(welcome)
+    // ---------------------
 
     // TODO: add correct instructions
-    // instructions trial
+    // ---------------------
+    //      instructions    
+    // ---------------------
     var instructions = {
         type: jsPsychInstructions,
         pages: [
@@ -98,9 +103,14 @@ var Experiment = function (jsPsych, condlist, trials) {
         page_label: "<b>Instructions</b>",
         allow_backward: false,
     }
+    // ---------------------
 
+    // TODO: change headings
+    // ---------------------
+    //        examples      
+    // ---------------------
     // example video
-    var sim_vid = {
+    var ex_vid = {
         type: jsPsychVideoButtonResponse,
         stimulus: [
             // placeholder data
@@ -114,7 +124,7 @@ var Experiment = function (jsPsych, condlist, trials) {
     };
 
     // example sketchpad
-    var sim_sketch = {
+    var ex_sketch = {
         type: jsPsychSketchpad,
         prompt: '<h2>Example of the sketchpad</h2>' + '<h3>Please take a moment to familiarize yourself with the sketchpad. </h3>' + '<br><p>Using your mouse, draw the complete trajectory of the ball from the previous video.</p>',
         prompt_location: 'belowcanvas',
@@ -129,12 +139,16 @@ var Experiment = function (jsPsych, condlist, trials) {
         trial_duration: 10000,
         show_countdown_trial_duration: true
     }
+    // ---------------------
 
     // TODO: add correct comp check questions
-    // comprehension check questions
+    // ---------------------
+    // comprehension check  
+    // ---------------------
+    // questions
     var comp_check = {
         type: jsPsychSurveyMultiChoice,
-        preamble: "<h2> Comprehension Check</h2>",
+        preamble: "<h2>Comprehension Check</h2>",
         questions: [{
                 prompt: "Your task for this experiment is to ~<b>eat bananas</b>~.",
                 name: 'check1',
@@ -159,13 +173,13 @@ var Experiment = function (jsPsych, condlist, trials) {
     };
 
 
-    // comprehension check feedback
+    // feedback
     var comp_feedback = {
         type: jsPsychHtmlButtonResponse,
         stimulus: function () {
-            var last_resp_correct = jsPsych.data.getLastTrialData().values()[0].correct;
+            var last_correct_resp = jsPsych.data.getLastTrialData().values()[0].correct;
 
-            if (last_resp_correct) {
+            if (last_correct_resp) {
                 return "<span style='color:green'><h2>You passed the comprehension check!</h2></span>" + "<br>Please click <b>Next</b> to begin the study."
             } else {
                 return "<span style='color:red'><h2>You failed to respond <b>correctly</b> to all parts of the comprehension check.</h2></span>" + "<br>Please click <b>Next</b> to revisit the instructions."
@@ -174,18 +188,21 @@ var Experiment = function (jsPsych, condlist, trials) {
         choices: ['Next']
     };
 
-    // compcheck: if answer incorrect, compcheck1 will be repeated until correct response inserted
+    // `comp_loop`: if answers are incorrect, `comp_check` will be repeated until answers are correct responses
     var comp_loop = {
-        timeline: [instructions, sim_vid, sim_sketch, comp_check, comp_feedback],
+        timeline: [instructions, ex_vid, ex_sketch, comp_check, comp_feedback],
         loop_function: function (data) {
-            // check if comp_check was passed, break loop 
+            // check if `comp_check` was passed, break loop 
             return (data.values()[3].correct) ? false : true;
         }
     };
 
-    trials.push(comp_loop)
+    trials.push(comp_loop);
+    // ---------------------
 
-
+    // ---------------------
+    //        trials        
+    // ---------------------
     for (i = 0; i < condlist.length; i++) {
         var vid = condlist[i][0];
         var img = condlist[i][1];
@@ -207,7 +224,7 @@ var Experiment = function (jsPsych, condlist, trials) {
             type: jsPsychSketchpad,
             prompt: '<p>Please draw the complete trajectory of the ball from the previous video.</p>',
             prompt_location: 'abovecanvas',
-            stroke_color_palette: ['blue', 'pink', 'green', 'orange'],
+            stroke_color_palette: ['blue'],
             stroke_color: 'blue',
             background_image: "static/data/images/" + img, // placeholder data
             canvas_width: 750,
@@ -221,17 +238,22 @@ var Experiment = function (jsPsych, condlist, trials) {
         // display fixation cross then stimulus
         trials.push(stim_vid, sketchpad);
     }
+    // ---------------------
 
-    // end message
+
+    // ---------------------
+    //       end page        
+    // ---------------------
     var end_trial = {
         type: jsPsychHtmlButtonResponse,
-        stimulus: "<h2><b>Thank you for volunteering to help out with our study! :) </b></h2><br><br>" +
+        stimulus: "<h2><b>Thank you for helping us with our study! :) </b></h2><br><br>" +
             "Click <b>Done</b> to submit your responses. <br>",
         choices: ['<b>Done</b>'],
     };
 
     // display end message
     trials.push(end_trial);
+    // ---------------------
 };
 
 
@@ -242,7 +264,7 @@ var Experiment = function (jsPsych, condlist, trials) {
 $(window).on('load', async () => {
     await init;
 
-    function load_condlist() {
+    function run_experiment() {
         $.ajax({
             dataType: 'json',
             url: "static/data/condlist.json",
@@ -277,11 +299,11 @@ $(window).on('load', async () => {
         return;
     }
 
-    load_condlist();
+    run_experiment();
 });
 
 
-// not being used for this EEG experiment -- chloë 01/19/2023
+// ? might be getting used for this exp? -- chloë 01/20/2023
 // only needed if you want a post-questionnnaire
 /****************
  * Questionnaire *
