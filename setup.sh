@@ -4,7 +4,7 @@
 CONTLINK="docker://cpllab/psiturk:latest"
 # Path to put data
 DATAPATH="psiturk/static/"
-LINKHASH="6sk7j03bxu7teak2utr4ts3t1sh2ykdt"
+LINKHASH="os3f7pvdomxx5ooyuzqlk9hqnzctcvfr"
 DATALINK="https://yale.box.com/shared/static/${LINKHASH}.gz"
 
 # DATALINK="https://yale.box.com/shared/static/eyu6jgppz6ek4a3vz63t9t1ipqit2q3m.gz"
@@ -28,9 +28,9 @@ supported targets:
 # datasets
 [[ "${@}" =~ "data" ]] || [[ "${@}" =~ "data" ]] || echo "Not touching data"
 [[ "${@}" =~ "data" ]] && echo "pulling data" && \
-    wget "$DATALINK" -O "ecog_pilot_data.tar.gz" && \
-    tar -xvzf "ecog_pilot_data.tar.gz" -C "$DATAPATH" && \
-    rm "ecog_pilot_data.tar.gz"
+    wget "$DATALINK" -O "ccn_pilot_data.tar.gz" && \
+    tar -xvzf "ccn_pilot_data.tar.gz" -C "$DATAPATH" && \
+    rm "ccn_pilot_data.tar.gz"
 
 # datasets
 [[ "${@}" =~ "env" ]] || [[ "${@}" =~ "env" ]] || echo "Not touching conda env"
