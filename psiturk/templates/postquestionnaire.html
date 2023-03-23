@@ -4,9 +4,16 @@
 
     <hr />
 
-    <p>You are finished!.</p>
+    <p>You are finished!</p>
 
     <div class="instructions well">
+
+        <form id="postquiz" action="debrief" method="post">
+            <!-- beginning of a question -->
+            Did you use any strategies to perform the experiment? <br>
+            <textarea name="comments" rows="4" cols="100" id="comments" placeholder="Enter answer here"></textarea>
+            <!-- end of a question -->
+        </form>
 
         <form id="postquiz" action="debrief" method="post">
             <!-- beginning of a question -->

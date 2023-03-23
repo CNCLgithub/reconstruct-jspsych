@@ -28,7 +28,13 @@ psiturk_old.sif
 psiturk_latest.sif
 .psiturk_history
 psiturk/static/images/test-stimuli/
-jspsych
+# psiturk/static/jspsych/dist
+psiturk/static/jspysch/examples
+psiturk/static/jspsych/*.md
+psiturk/static/jspsych/*.txt
 responses/*
 # static/data/
 participants.db
+tmp.js
+*.db
+tmp.py
