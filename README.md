@@ -50,7 +50,7 @@ chmod +x setup.sh
 
 
 ```bash
-conda activate eeg-psiturk-env
+conda activate reconstruct-env
 cd psiturk/
 psiturk server on
 ```
